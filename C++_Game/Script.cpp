@@ -43,7 +43,7 @@ void GameManager::Chapter1(std::vector<GameScene>& script) {
 
 void GameManager::Chapter2(std::vector<GameScene>& script) {
 	std::vector<GameScene> common;
-	addScene(common, "", "2번째 취조입니다.", "", "2번째", "1번", "2번", 100.0f);
+	addScene(common, "", "2번째 취조입니다.", "", "2번째", "1번", "2번");
 
 	int choice = playScene(common);
 

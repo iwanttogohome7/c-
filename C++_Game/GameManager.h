@@ -53,8 +53,6 @@ public:
     //시나리오 데이터
 	void Opening(std::vector<GameScene>& script);
     void Chapter1(std::vector<GameScene>& script);
-	void Chapter1_A(std::vector<GameScene>& script);
-	void Chapter1_B(std::vector<GameScene>& script);
     void Chapter2(std::vector<GameScene>& script);
     void Chapter3(std::vector<GameScene>& script);
     void Chapter4(std::vector<GameScene>& script);

@@ -243,12 +243,6 @@ void GameManager::checkEnding()
 
 // 메인 게임 루프
 void GameManager::run() {
-	openingConsole();
-	printf("게임이 시작됩니다...\n");
-    std::string playerName;
-	std::cout << "이름을 입력해주세요: ";
-	std::cin >> playerName;
-
 	initConsole();
     std::vector<GameScene> script;
 
