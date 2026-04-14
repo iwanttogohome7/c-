@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <string>
 
 //캐릭터 기본 클래스 (메인 캐릭터용)
