@@ -245,7 +245,7 @@ void GameManager::checkEnding()
 void GameManager::run() {
 	initConsole();
     std::vector<GameScene> script;
-
+    Opening(script);
     for (int i = 0; i < ChapterList.size(); i++)
     {
 		gameLog.clear();
