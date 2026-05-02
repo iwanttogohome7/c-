@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="usingRaylib.vcxproj" Id="ca7698f4-4367-4d34-8878-d67d05bed2de" />
+</Solution>
