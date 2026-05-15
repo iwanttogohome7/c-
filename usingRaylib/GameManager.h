@@ -7,7 +7,6 @@
 #include <iomanip>
 #include <vector>
 #include <functional>
-#include <conio.h> //Windows전용
 #include "Character.h"
 
 
@@ -24,6 +23,7 @@ struct GameScene
 
 class GameManager {
 private:
+	std::string PlayerName; // 플레이어 이름
     Font font;
     float erosion;           // 침식도
     int interrogationCount;  // 취조 횟수
@@ -43,16 +43,18 @@ public:
     void addScene(std::vector<GameScene>& script, std::string name, std::string gameLine, std::string realLine, std::string systemLine = "", std::string opt1 = "", std::string opt2 = "", float erosion1 = 0.0f, float erosion2 = 0.0f);
     void addGameLog(std::string name, std::string text);
     void addRealLog(std::string name, std::string text);
-    void playAnimation(); // 애니메이션 재생 함수 (오프닝 -> 게임)
+    std::string inputPlayerName();
 	void renderFrame(const GameScene& scene); // 기본 틀 그리기 함수
 	int playScene(std::vector<GameScene>& script);
     void titleScreen();
     void OpeningScene();
+    void OpeningLoop(std::vector<GameScene>& script, Texture2D img, std::string systemMsg);
     void run();
     void checkEnding();
 
     //시나리오 데이터
-	void Opening(std::vector<GameScene>& script);
+	void Opening1(std::vector<GameScene>& script);
+    void Opening2(std::vector<GameScene>& script);
     void Chapter1(std::vector<GameScene>& script);
     void Chapter2(std::vector<GameScene>& script);
     void Chapter3(std::vector<GameScene>& script);

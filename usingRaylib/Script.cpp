@@ -1,6 +1,4 @@
-﻿#pragma once
-#include <vector>
-#include "GameManager.h"
+﻿#include "GameManager.h"
 
 
 //addSecne(script, 이름, 게임 대사, 현실 대사, 시스템 메시지, 선택지1, 선택지2, 침식도 증가량1, 침식도 증가량2) 
@@ -10,27 +8,34 @@
 // 게임 대사만 적으면 왼쪽에만, 현실 대사만 적으면 오른쪽에만 출력되며 둘 다 적으면 양쪽에 모두 출력됩니다.
 // addScene함수만 복사해서 사용하시면 됩니다.
 
-void GameManager::Opening(std::vector<GameScene>& script) {
+void GameManager::Opening1(std::vector<GameScene>& script) {
 	addScene(script, "", "", "", "오프닝용입니다.");
-	addScene(script, "유라", "", "오빠 이거봐봐 닉네임을 입력해야 된대! 뭘로 할거야?!");
+	addScene(script, girlfriend->getName(), "", "오빠 이거봐봐 닉네임을 입력해야 된대! 뭘로 할거야?!");
 	addScene(script, "", "", "", "유라가 플레이 버튼을 누르는 순간 사전 설명도 없이 바로 플레이어 이름 입력창이 떴다.");
-	std::string PlayerName;
+	addScene(script, PlayerName, "", "세계관 설명도 안해주고 바로 게임 시작?");
+	addScene(script, PlayerName, "", "하꼬 인디게임이라고 해도 말이야, 너무 불친절 한 거 아니야?");
+	addScene(script, "", "", "", "하는 수 없이 키보드에 손을 올려 닉네임을 입력했다.");
+}
+
+void GameManager::Opening2(std::vector<GameScene>& script) {
+	addScene(script, PlayerName, "", "흐아암~...");
+	addScene(script, girlfriend->getName(), "", " 오빠! 지금까지 잤잖아~ 하품하면 어떡해!");
 }
 
 void GameManager::Chapter1(std::vector<GameScene>& script) {
 	std::vector<GameScene> common; //공통
 	addScene(common, "", "화면이 암전된 후, 차가운 형광등 아래 취조실이 나타난다.", "", "형광등 아래 남성의 실체가 보인다.");
 	addScene(common, "", "맞은편에 사내가 앉아 있다.", "", "취조실의 공기가 차갑게 가라앉습니다.");
-	addScene(common, "", "그는 왼쪽 검지 손톱을 뜯으며 당신을 응시한다.", "", "", "책상 위의 서류를 확인한다.", "\"???, 본인 맞습니까?\"", 5.0f, 30.0f);
+	addScene(common, "", "그는 왼쪽 검지 손톱을 뜯으며 당신을 응시한다.", "", "", "책상 위의 서류를 확인한다.", "\"???, 본인 맞습니까?\"", 5.0f, 0.0f);
 
 	int choice = playScene(common);
 
 	std::vector<GameScene> branch; //분기
 	if (choice == 1) {
 		addScene(branch, "", "당신은 책상 위에 놓인 누런 서류 봉투를 열자 사건 현장 사진들이 쏟아진다.", "", "꺾인 팔다리, 기괴하게 화장된 얼굴… 그중 한 장의 사진 구석에 빨갛게 물든 귀걸이가 찍혀 있다.");
-		addScene(branch, "유라", "", "와... 저 사진들 진짜 징그럽다..", "여자친구가 게임 속 사진들을 바라봅니다.");
-		addScene(branch, "유라", "", "근데 저 사진안에 있는 귀걸이..", "여자친구가 게임 속 귀걸이를 유심히 바라봅니다.");
-		addScene(branch, "유라", "", "내가 어제 잃어버린 거랑 되게 비슷하지 않아?", "여자친구가 게임 속 귀걸이를 유심히 바라봅니다.");
+		addScene(branch, girlfriend->getName(), "", "와... 저 사진들 진짜 징그럽다..", "여자친구가 게임 속 사진들을 바라봅니다.");
+		addScene(branch, girlfriend->getName(), "", "근데 저 사진안에 있는 귀걸이..", "여자친구가 게임 속 귀걸이를 유심히 바라봅니다.");
+		addScene(branch, girlfriend->getName(), "", "내가 어제 잃어버린 거랑 되게 비슷하지 않아?", "여자친구가 게임 속 귀걸이를 유심히 바라봅니다.");
 	}
 	else if(choice == 2) {
 		addScene(branch, "", "당신은 서류는 거들떠보지도 않은 채 ???의 눈을 꿰뚫어 보듯 묻는다.", "", "???의 눈을 응시한다.");
