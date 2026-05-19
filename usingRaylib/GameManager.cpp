@@ -9,7 +9,6 @@
 #include "Character.h"
 #include "GameManager.h"
 
-int TOTAL_WIDTH = 155;
 
 int FONT_SIZE = 35;
 
@@ -17,11 +16,12 @@ int FONT_SIZE = 35;
 
 
 //생성자
-GameManager::GameManager() : erosion(0.0f), interrogationCount(1) {
+GameManager::GameManager() : erosion(0.0f), interrogationCount(1), font({ 0 }) {
 	suspect = new Suspect();
 	girlfriend = new Girlfriend();
 
 	// ChapterList에 각 챕터 함수 저장
+	ChapterList.push_back([this](std::vector<GameScene>& s) { Prologue(s); });
     ChapterList.push_back([this](std::vector<GameScene>& s) { Chapter1(s); });
     ChapterList.push_back([this](std::vector<GameScene>& s) { Chapter2(s); });
     ChapterList.push_back([this](std::vector<GameScene>& s) { Chapter3(s); });
@@ -31,7 +31,6 @@ GameManager::GameManager() : erosion(0.0f), interrogationCount(1) {
     ChapterList.push_back([this](std::vector<GameScene>& s) { Chapter7(s); });
     ChapterList.push_back([this](std::vector<GameScene>& s) { Chapter8(s); });
     ChapterList.push_back([this](std::vector<GameScene>& s) { Chapter9(s); });
-    ChapterList.push_back([this](std::vector<GameScene>& s) { Chapter10(s); });
 }
 //소멸자
 GameManager::~GameManager() {
@@ -93,15 +92,15 @@ void GameManager::titleScreen() {
 		DrawRectangleLines(480, 1, 960, 521, {0,0,0,180});
         DrawTextEx(font, title.c_str(), {500, 5}, 500, 1, WHITE);
 
-		Rectangle startRect = { 240, 521, 1500, 200 };
+		Rectangle startRect = { 600, 521, 1500, 200 };
         Color startColor = CheckCollisionPointRec(mousePos, startRect) ? RED : WHITE;
-        DrawRectangleLines(240, 521, 1500, 200, {0,0,0,180});
-        DrawTextEx(font, start.c_str(), { 240, 525 }, 145, 1, startColor);
+        DrawRectangleLines(600, 521, 1500, 200, {0,0,0,180});
+        DrawTextEx(font, start.c_str(), { 600, 525 }, 145, 1, startColor);
 
 		
 
         if (CheckCollisionPointRec(mousePos, startRect)) {
-            DrawTextEx(font, start.c_str(), { 240, 525 }, 145, 1, startColor);
+            DrawTextEx(font, start.c_str(), { 600, 525 }, 145, 1, startColor);
 			if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
                 
                 break;
@@ -137,18 +136,18 @@ std::string GameManager::inputPlayerName() {
         ClearBackground(BLACK);
 
         // 입력창 UI
-        DrawTextEx(font, "닉네임을 입력하세요 (영문, 최대 10자)", { 100, 380 }, FONT_SIZE, 1, GRAY);
-        DrawRectangleLines(100, 440, 500, 60, GRAY);
-        DrawTextEx(font, input.c_str(), { 110, 450 }, FONT_SIZE, 1, WHITE);
+        DrawTextEx(font, "닉네임을 입력하세요 (영문, 최대 10자)", { 700, 380 }, FONT_SIZE, 1, GRAY);
+        DrawRectangleLines(700, 440, 500, 60, GRAY);
+        DrawTextEx(font, input.c_str(), { 710, 450 }, FONT_SIZE, 1, WHITE);
 
         // 커서 깜빡임
         if ((int)(GetTime() * 2) % 2 == 0) {
             float inputW = MeasureTextEx(font, input.c_str(), FONT_SIZE, 1).x;
-            DrawTextEx(font, "|", { 110 + inputW, 450 }, FONT_SIZE, 1, WHITE);
+            DrawTextEx(font, "|", { 710 + inputW, 450 }, FONT_SIZE, 1, WHITE);
         }
 
         // 안내
-        DrawTextEx(font, "Enter키로 확정", { 100, 510 }, FONT_SIZE, 1, DARKGRAY);
+        DrawTextEx(font, "Enter키로 확정", { 700, 510 }, FONT_SIZE, 1, DARKGRAY);
 
         EndDrawing();
     }
@@ -229,21 +228,65 @@ void GameManager::OpeningScene() {
     // 이미지 로드 (미리 준비된 여자친구 이미지)
     Texture2D girlfriendImg = LoadTexture(girlfriend->getPNG().c_str());
     
+	std::vector<GameScene> openingTexts1;
+	Opening1(openingTexts1);
+	OpeningLoop(openingTexts1, {0}, "");
 
-    std::vector<GameScene> openingTexts;
-    Opening1(openingTexts);
-
-	OpeningLoop(openingTexts, girlfriendImg, ">>시스템 동기화 시작");
+    std::vector<GameScene> openingTexts2;
+    Opening2(openingTexts2);
+	OpeningLoop(openingTexts2, girlfriendImg, ">>시스템 동기화 시작");
 
 	PlayerName = inputPlayerName();
 
-    std::vector<GameScene> openingTexts2;
-	Opening2(openingTexts2);
+    std::vector<GameScene> openingTexts3;
+	Opening3(openingTexts3);
 
 	std::string welcomeMsg = ">>" + PlayerName + "님, 환영합니다.<<\n게임을 시작합니다.";
-    OpeningLoop(openingTexts2, girlfriendImg, welcomeMsg);
+    OpeningLoop(openingTexts3, girlfriendImg, welcomeMsg);
 
     UnloadTexture(girlfriendImg);
+}
+
+int GameManager::drawTextWrapped(const std::string& text, float x, float y, float maxWidth, int fontSize, Color color) {
+    std::string currentLine = "";
+    float currentY = y;
+    int lineCount = 1;
+    std::string remaining = text;
+
+    while (!remaining.empty()) {
+        // 한 글자씩 늘려가며 maxWidth 넘는 지점 찾기
+        std::string testLine = "";
+        int cutIndex = 0;
+
+        for (int i = 0; i < (int)remaining.size(); ) {
+            // UTF-8 한글은 3바이트
+            int charSize = 1;
+            unsigned char c = remaining[i];
+            if (c >= 0xE0) charSize = 3;
+            else if (c >= 0xC0) charSize = 2;
+
+            std::string testAdd = testLine + remaining.substr(i, charSize);
+            float testWidth = MeasureTextEx(font, testAdd.c_str(), fontSize, 1).x;
+
+            if (testWidth > maxWidth) break;
+
+            testLine = testAdd;
+            cutIndex = i + charSize;
+            i += charSize;
+        }
+
+        if (cutIndex == 0) break; // 한 글자도 못 들어가면 중단
+
+        DrawTextEx(font, testLine.c_str(), { x, currentY }, fontSize, 1, color);
+        remaining = remaining.substr(cutIndex);
+
+        if (!remaining.empty()) {
+            currentY += fontSize + 4;
+            lineCount++;
+        }
+    }
+
+    return lineCount;
 }
 
 // 화면 그리기
@@ -257,9 +300,9 @@ void GameManager::renderFrame(const GameScene& scene) {
     ClearBackground(BLACK);
 
     // ── 상단 영역 선 ──────────────────────────
-    DrawLine(0, 0, screenW, 0, GRAY);       // 최상단선
-    DrawLine(0, 45, screenW, 45, GRAY);     // 상단 구분선
-    DrawLine(halfW, 0, halfW, 40, GRAY);    // 상단 중앙 세로선
+    DrawLine(0, 0, screenW, 0, GRAY);
+    DrawLine(0, 45, screenW, 45, GRAY);
+    DrawLine(halfW, 0, halfW, 40, GRAY);
 
     // 취조 횟수 (좌상단)
     std::string leftTop = "[" + std::to_string(interrogationCount) + "번째 취조]";
@@ -278,27 +321,32 @@ void GameManager::renderFrame(const GameScene& scene) {
     // ── 로그 영역 ─────────────────────────────
     int logStartY = 50;
     int logEndY = screenH - 160;
+    float maxLogWidth = halfW - 20;
 
-    // 중앙 세로선 (로그 영역)
     DrawLine(halfW, 40, halfW, logEndY, GRAY);
 
     // 게임 로그 (왼쪽)
-    int maxLines = (logEndY - logStartY) / lineHeight;
-    for (int i = 0; i < (int)gameLog.size() && i < maxLines; i++) {
-        if(gameLog[i].find("[") == 0) DrawTextEx(font, gameLog[i].c_str(), { 10, (float)(logStartY + i * lineHeight) }, FONT_SIZE, 1, suspect->getTextColor());
-        else DrawTextEx(font, gameLog[i].c_str(), { 10, (float)(logStartY + i * lineHeight) }, FONT_SIZE, 1, LIGHTGRAY);
+    int currentGameY = logStartY;
+    for (int i = 0; i < (int)gameLog.size(); i++) {
+        if (currentGameY >= logEndY) break;
+        Color color = (gameLog[i].find("[") == 0) ? suspect->getTextColor() : LIGHTGRAY;
+        int linesDrawn = drawTextWrapped(gameLog[i], 10, currentGameY, maxLogWidth, FONT_SIZE, color);
+        currentGameY += linesDrawn * lineHeight;
     }
+
     // 현실 로그 (오른쪽)
-    for (int i = 0; i < (int)realLog.size() && i < maxLines; i++) {
-		if (realLog[i].find("[") == 0) DrawTextEx(font, realLog[i].c_str(), { (float)(halfW + 10), (float)(logStartY + i * lineHeight) }, FONT_SIZE, 1, girlfriend->getTextColor());
-        else DrawTextEx(font, realLog[i].c_str(), { (float)(halfW + 10), (float)(logStartY + i * lineHeight) }, FONT_SIZE, 1, LIGHTGRAY);
+    int currentRealY = logStartY;
+    for (int i = 0; i < (int)realLog.size(); i++) {
+        if (currentRealY >= logEndY) break;
+        Color color = (realLog[i].find("[") == 0) ? girlfriend->getTextColor() : LIGHTGRAY;
+        int linesDrawn = drawTextWrapped(realLog[i], halfW + 10, currentRealY, maxLogWidth, FONT_SIZE, color);
+        currentRealY += linesDrawn * lineHeight;
     }
 
     // ── 하단 UI 영역 선 ───────────────────────
-    DrawLine(0, logEndY, screenW, logEndY, GRAY);           // 로그/하단 구분선
-    //DrawLine(0, logEndY + 30, screenW, logEndY + 30, GRAY); // 시스템메시지 구분선
-    DrawLine(0, logEndY + 70, screenW, logEndY + 70, GRAY); // 선택지 구분선
-    DrawLine(0, screenH - 5, screenW, screenH - 5, GRAY);   // 최하단선
+    DrawLine(0, logEndY, screenW, logEndY, GRAY);
+    DrawLine(0, logEndY + 70, screenW, logEndY + 70, GRAY);
+    DrawLine(0, screenH - 5, screenW, screenH - 5, GRAY);
 
     // 시스템 메시지
     DrawTextEx(font, "[시스템 메시지]", { 10, (float)(logEndY + 5) }, FONT_SIZE, 1, YELLOW);
@@ -316,7 +364,6 @@ void GameManager::renderFrame(const GameScene& scene) {
         Rectangle opt1Rect = { 10, (float)(logEndY + 70), (float)MeasureTextEx(font, opt1.c_str(), FONT_SIZE, 1).x + 500, (float)FONT_SIZE };
         Rectangle opt2Rect = { 10, (float)(logEndY + 110), (float)MeasureTextEx(font, opt2.c_str(), FONT_SIZE, 1).x + 500, (float)FONT_SIZE };
 
-        // 마우스 올라가 있으면 WHITE, 아니면 GREEN
         Color opt1Color = CheckCollisionPointRec(mousePos, opt1Rect) ? WHITE : GREEN;
         Color opt2Color = CheckCollisionPointRec(mousePos, opt2Rect) ? WHITE : GREEN;
         DrawTextEx(font, opt1.c_str(), { 10, (float)(logEndY + 70) }, FONT_SIZE, 1, opt1Color);
@@ -326,7 +373,7 @@ void GameManager::renderFrame(const GameScene& scene) {
     }
 
     EndDrawing();
-}  
+}
 
 
 int GameManager::playScene(std::vector<GameScene>& script) {
@@ -395,18 +442,27 @@ int GameManager::playScene(std::vector<GameScene>& script) {
 // 엔딩 판별
 void GameManager::checkEnding() 
 {
+    Texture2D girlfriendImg = LoadTexture(girlfriend->getPNG().c_str());
+
+    std::vector<GameScene> script;
+
     if (erosion < 30.0f) 
     {
-        std::cout << ">> 해피 엔딩: 연결 해제 성공" << std::endl;
+        HappyEndingScene(script);
+        OpeningLoop(script, girlfriendImg, ">>Happy Ending<<");
     }
     else if (erosion < 100.0f) 
     {
-        std::cout << ">> 노말 엔딩: ~~" << std::endl;
+        NormalEndingScene(script);
+        OpeningLoop(script, girlfriendImg, ">>Normal Ending<<");
     }
     else 
     {
-        std::cout << ">> 배드 엔딩: Connection Established... 게임 오버" << std::endl;
+        BadEndingScene(script);
+        OpeningLoop(script, girlfriendImg, ">>Bad Ending<<");
     }
+
+    UnloadTexture(girlfriendImg);
 }
 
 // 메인 게임 루프

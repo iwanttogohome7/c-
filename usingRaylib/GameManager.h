@@ -45,6 +45,7 @@ public:
     void addRealLog(std::string name, std::string text);
     std::string inputPlayerName();
 	void renderFrame(const GameScene& scene); // 기본 틀 그리기 함수
+    int drawTextWrapped(const std::string& text, float x, float y, float maxWidth, int fontSize, Color color);
 	int playScene(std::vector<GameScene>& script);
     void titleScreen();
     void OpeningScene();
@@ -55,6 +56,8 @@ public:
     //시나리오 데이터
 	void Opening1(std::vector<GameScene>& script);
     void Opening2(std::vector<GameScene>& script);
+	void Opening3(std::vector<GameScene>& script);
+	void Prologue(std::vector<GameScene>& script);
     void Chapter1(std::vector<GameScene>& script);
     void Chapter2(std::vector<GameScene>& script);
     void Chapter3(std::vector<GameScene>& script);
@@ -64,5 +67,8 @@ public:
     void Chapter7(std::vector<GameScene>& script);
     void Chapter8(std::vector<GameScene>& script);
     void Chapter9(std::vector<GameScene>& script);
-    void Chapter10(std::vector<GameScene>& script);
+	void itemScene(std::vector<GameScene>& script);
+	void BadEndingScene(std::vector<GameScene>& script);
+	void NormalEndingScene(std::vector<GameScene>& script);
+	void HappyEndingScene(std::vector<GameScene>& script);
 };
