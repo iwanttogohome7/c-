@@ -27,6 +27,9 @@ private:
     Font font;
     float erosion;           // 침식도
     int interrogationCount;  // 취조 횟수
+	bool hasItem;            // 아이템 획득 여부
+	bool itemShown;           // 아이템 씬이 이미 나왔는지 여부
+	int goodChoiceCount;      // 좋은 선택 횟수
     Character* suspect; // 용의자 캐릭터 포인터
     Character* girlfriend; // 여자친구 캐릭터 포인터
     std::vector<std::string> gameLog; // 게임 대사 로그
@@ -68,6 +71,7 @@ public:
     void Chapter8(std::vector<GameScene>& script);
     void Chapter9(std::vector<GameScene>& script);
 	void itemScene(std::vector<GameScene>& script);
+	void itemUsing(std::vector<GameScene>& script);
 	void BadEndingScene(std::vector<GameScene>& script);
 	void NormalEndingScene(std::vector<GameScene>& script);
 	void HappyEndingScene(std::vector<GameScene>& script);

@@ -274,7 +274,7 @@ void GameManager::Chapter7(std::vector<GameScene>& script) {
 	addScene(common, "살인마", "(낮고 또렷하게)" + PlayerName, "");
 	addScene(common, "형사", "... 내가 이름을 밝힌 적이 있던가? 누가 알려준 거지?", "");
 	addScene(common, "살인마", "(잠시 생각하는 듯 고개를 기울이며) “... 형사님이 알려준 것 같기도 하고, 그 여자한테 들은 것 같기도 하고..", "");
-	addScene(common, "", "", "", "", "공범이 있다는 거냐. 그 여자 신원을 대라.", "(내가 알려준 적이 없다는 걸 안다. 근데 … 그 여자의 정체는 혹시.)", 0, 10);
+	addScene(common, "", "", "", "", "공범이 있다는 거냐. 그 여자 신원을 대라.", "(내가 알려준 적이 없다는 걸 안다. 근데 … 그 여자의 정체는 혹시.)", 0, 15);
 
 	int choice = playScene(common);
 
@@ -301,7 +301,7 @@ void GameManager::Chapter8(std::vector<GameScene>& script) {
 	addScene(common, "형사", "편한 방법.", "");
 	addScene(common, "살인마", "(잠시 뜸을 들이며) 누군가 나만 바라보게 만들고 싶으면, 다른 걸 전부 없애면 되거든.", "");
 	addScene(common, "살인마", "사랑받으려고 한 게 아니야. 그 사람한테 내가 전부가 되고 싶었던 거지.", "");
-	addScene(common, "", "", "", "", "(다른 걸 전부 없애면 된다. 그 말이 어디선가 들어본 것처럼 귀에 걸린다.)", "계획적 고립이었군. 구체적인 수단을 진술해라.", 10, 0);
+	addScene(common, "", "", "", "", "(다른 걸 전부 없애면 된다. 그 말이 어디선가 들어본 것처럼 귀에 걸린다.)", "계획적 고립이었군. 구체적인 수단을 진술해라.", 15, 0);
 
 	int choice = playScene(common);
 
@@ -328,7 +328,7 @@ void GameManager::Chapter9(std::vector<GameScene>& script) {
 	addScene(common, "살인마", "(고개를 젓는다) 살인이 아니라 완성이지.", "");
 	addScene(common, "살인마", "(아주 낮은 목소리로) ... 형사님도 누군가한테 그런 말 한 적 있지 않아요?", "");
 	addScene(common, "형사", "(그 말이 왜 이렇게 오래 머무르는 건지 모르겠다.)", "");
-	addScene(common, "", "", "", "", "취조를 종료한다. 최종 진술을 녹취하겠다.", "(있다. 분명히 있다. 근데 왜 지금 그게 떠오르는 거지.)", 0, 10);
+	addScene(common, "", "", "", "", "취조를 종료한다. 최종 진술을 녹취하겠다.", "(있다. 분명히 있다. 근데 왜 지금 그게 떠오르는 거지.)", 0, 15);
 
 	int choice = playScene(common);
 
@@ -342,10 +342,21 @@ void GameManager::Chapter9(std::vector<GameScene>& script) {
 	playScene(branch);
 }
 
-// 아이템 지급 시나리오
+// 아이템 획득 시나리오
 void GameManager::itemScene(std::vector<GameScene>& script) {
-	addScene(script, "", "", "", "아이템 지급 시나리오입니다.");
-	addScene(script, "", "", "당신은 아이템을 획득했다!");
+	addScene(script, "", "", "", "아이템 획득 시나리오입니다.");
+	addScene(script, girlfriend->getName(), "", "오빠 이거 봐봐! 내가 만든 간식인데 맛있어!");
+	addScene(script, girlfriend->getName(), "", "내가 밤새워서 레시피 연구한 건데!");
+	addScene(script, girlfriend->getName(), "", "오빠가 좋아하는 맛으로 만들었어!");
+	addScene(script, "", "", "", "여자친구가 수상한 간식을 건넸다. 지금은 배가 안 고프니 나중에 먹어야지. ");
+}
+
+// 아이템 사용 시나리오
+void GameManager::itemUsing(std::vector<GameScene>& script) {
+	addScene(script, "", "", "", "아이템 사용 시나리오입니다.");
+	addScene(script, girlfriend->getName(), "", "내가 준 과자 안먹을거야?");
+	addScene(script, girlfriend->getName(), "", "안 먹으면 후회할텐데");
+	addScene(script, "", "", "", "수상한 간식을 먹겠습니까?", "먹는다", "먹지 않는다", -20, 0);
 }
 
 void GameManager::BadEndingScene(std::vector<GameScene>& script) {

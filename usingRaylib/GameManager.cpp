@@ -16,7 +16,7 @@ int FONT_SIZE = 35;
 
 
 //생성자
-GameManager::GameManager() : erosion(0.0f), interrogationCount(1), font({ 0 }) {
+GameManager::GameManager() : erosion(0.0f), interrogationCount(1), font({ 0 }), hasItem(false), itemShown(false), goodChoiceCount(0) {
 	suspect = new Suspect();
 	girlfriend = new Girlfriend();
 
@@ -165,9 +165,6 @@ void GameManager::OpeningLoop(std::vector<GameScene>& script, Texture2D img, std
         BeginDrawing();
         ClearBackground(BLACK);
 
-        // ── 배경 (나중에 배경 이미지로 교체 가능) ──
-        //DrawRectangle(0, 0, screenW, screenH, { 20, 20, 30, 255 });
-
         // ── 캐릭터 이미지 (화면 중앙) ──
         float imgScale = (float)(screenH * 0.8f) / img.height;
         int imgW = img.width * imgScale;
@@ -254,12 +251,10 @@ int GameManager::drawTextWrapped(const std::string& text, float x, float y, floa
     std::string remaining = text;
 
     while (!remaining.empty()) {
-        // 한 글자씩 늘려가며 maxWidth 넘는 지점 찾기
         std::string testLine = "";
         int cutIndex = 0;
 
         for (int i = 0; i < (int)remaining.size(); ) {
-            // UTF-8 한글은 3바이트
             int charSize = 1;
             unsigned char c = remaining[i];
             if (c >= 0xE0) charSize = 3;
@@ -418,6 +413,19 @@ int GameManager::playScene(std::vector<GameScene>& script) {
             if (IsKeyPressed(KEY_ONE) || IsKeyPressed(KEY_KP_1) || (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(mousePos, opt1Rect))) {
                 choice = 1;
                 erosion += s.erosionIncrease1;
+                if (s.erosionIncrease1 == 0)
+                {
+                    goodChoiceCount++;
+                    if (goodChoiceCount == 3 && !hasItem)
+                    {
+                        hasItem = true;
+                        goodChoiceCount = 0;
+                    }
+                }
+                else
+                {
+					goodChoiceCount = 0;
+                }
                 s.options[0] = s.options[1] = "";
                 i++;
                 logged = false;
@@ -425,6 +433,19 @@ int GameManager::playScene(std::vector<GameScene>& script) {
             else if (IsKeyPressed(KEY_TWO) || IsKeyPressed(KEY_KP_2) || (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(mousePos, opt2Rect))) {
                 choice = 2;
                 erosion += s.erosionIncrease2;
+                if (s.erosionIncrease2 == 0)
+                {
+                    goodChoiceCount++;
+                    if (goodChoiceCount == 3 && !hasItem)
+                    {
+                        hasItem = true;
+                        goodChoiceCount = 0;
+                    }
+                }
+                else
+                {
+                    goodChoiceCount = 0;
+                }
                 s.options[0] = s.options[1] = "";
                 i++;
                 logged = false;
@@ -442,24 +463,34 @@ int GameManager::playScene(std::vector<GameScene>& script) {
 // 엔딩 판별
 void GameManager::checkEnding() 
 {
+	std::vector<GameScene> itemScript;
+	itemUsing(itemScript);
+    if (hasItem)
+    {
+        --interrogationCount;
+        gameLog.clear();
+        realLog.clear();
+        playScene(itemScript);
+    }
+
     Texture2D girlfriendImg = LoadTexture(girlfriend->getPNG().c_str());
 
-    std::vector<GameScene> script;
+    std::vector<GameScene> ending;
 
     if (erosion < 30.0f) 
     {
-        HappyEndingScene(script);
-        OpeningLoop(script, girlfriendImg, ">>Happy Ending<<");
+        HappyEndingScene(ending);
+        OpeningLoop(ending, girlfriendImg, ">>Happy Ending<<");
     }
-    else if (erosion < 100.0f) 
+    else if (erosion < 100.0f && erosion >= 30.0f) 
     {
-        NormalEndingScene(script);
-        OpeningLoop(script, girlfriendImg, ">>Normal Ending<<");
+        NormalEndingScene(ending);
+        OpeningLoop(ending, girlfriendImg, ">>Normal Ending<<");
     }
-    else 
+	else if (erosion >= 100.0f)
     {
-        BadEndingScene(script);
-        OpeningLoop(script, girlfriendImg, ">>Bad Ending<<");
+        BadEndingScene(ending);
+        OpeningLoop(ending, girlfriendImg, ">>Bad Ending<<");
     }
 
     UnloadTexture(girlfriendImg);
@@ -470,8 +501,6 @@ void GameManager::run() {
     InitWindow(1920, 1080, "싱크");
     SetTargetFPS(60);
 
-    // 한글 코드포인트 로드
-    std::vector<int> codepoints;
     font = LoadFontEx("malgun.ttf", FONT_SIZE, nullptr, 0x3FFFF);
 
     titleScreen();
@@ -486,8 +515,16 @@ void GameManager::run() {
         ChapterList[i](script);
         interrogationCount++;
         if (erosion >= 100.0f) break;
+        
+        if (hasItem && !itemShown)
+        {
+            std::vector<GameScene> itemScript;
+			itemScene(itemScript);
+            playScene(itemScript);
+            itemShown = true;
+        }
     }
-
+    
     checkEnding();
 
     UnloadFont(font);
