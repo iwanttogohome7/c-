@@ -6,26 +6,31 @@ Character::~Character() {}; //가상 소멸자, 다형성을 위해 필요
 
 // 2. 용의자 클래스 (Suspect) 구현
 Suspect::Suspect() : Character("살인마") {}
-std::string Suspect::speak(const std::string& dialogue) {
-    return dialogue;
-}
 Color Suspect::getTextColor() {
     return WHITE; // 용의자는 항상 흰색
 }
-std::string Suspect::getPNG() {
-    return "suspect.png";
+std::string Suspect::getPNG(const std::string keyword) {
+    return "";
 }
 
 // 3. 여자친구 클래스 (Girlfriend) 구현
 Girlfriend::Girlfriend() : Character("유라") {}
-std::string Girlfriend::speak(const std::string& dialogue) {
-    return dialogue;
-}
 Color Girlfriend::getTextColor() {
     return WHITE;
 }
-std::string Girlfriend::getPNG() {
-    if (erosion >= 70.0f) return "picture2.png";
-    if (erosion >= 30.0f) return "picture1.png";
-    return "picture.png";
+std::string Girlfriend::getPNG(const std::string keyword) {
+	// 키워드에 따른 이미지(현재는 임시 이미지 파일명)
+    if(keyword == "웃음") return "smile.png";
+    if(keyword == "울음") return "cry.png";
+    if(keyword == "화남") return "angry.png";
+
+	// 침식도에 따른 이미지(현재는 임시 이미지 파일명)
+    if(keyword == "침식도")
+    {
+        if (erosion >= 70.0f) return "picture2.png";
+        if (erosion >= 30.0f) return "picture1.png";
+        else return "picture.png";
+    }
+
+    return "";
 }

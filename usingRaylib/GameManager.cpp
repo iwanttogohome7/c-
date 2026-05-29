@@ -36,9 +36,10 @@ GameManager::GameManager() : erosion(0.0f), interrogationCount(1), font({ 0 }), 
 GameManager::~GameManager() {
 	delete suspect;
 	delete girlfriend;
+    if (currentSceneImage.id != 0) UnloadTexture(currentSceneImage);
 }
 
-void GameManager::addScene(std::vector<GameScene>& script, std::string name, std::string gameLine, std::string realLine, std::string systemLine, std::string opt1, std::string opt2, float erosion1, float erosion2) 
+void GameManager::addScene(std::vector<GameScene>& script, std::string name, std::string gameLine, std::string realLine, std::string systemLine, std::string opt1, std::string opt2, float erosion1, float erosion2, std::string keyword) 
 {
 	GameScene temp;
 	temp.speaker = name;
@@ -49,6 +50,7 @@ void GameManager::addScene(std::vector<GameScene>& script, std::string name, std
 	temp.options[1] = opt2;
 	temp.erosionIncrease1 = erosion1;
 	temp.erosionIncrease2 = erosion2;
+	temp.keyword = keyword;
     
 
 	script.push_back(temp);
@@ -154,7 +156,7 @@ std::string GameManager::inputPlayerName() {
     return input;
 }
 
-void GameManager::OpeningLoop(std::vector<GameScene>& script, Texture2D img, std::string systemMsg)
+void GameManager::CinematicFrame(std::vector<GameScene>& script, Texture2D img, std::string systemMsg)
 {
 	int i = 0;
 
@@ -222,16 +224,16 @@ void GameManager::OpeningLoop(std::vector<GameScene>& script, Texture2D img, std
 
 void GameManager::OpeningScene() {
 	girlfriend->getErosion(erosion);
-    // 이미지 로드 (미리 준비된 여자친구 이미지)
-    Texture2D girlfriendImg = LoadTexture(girlfriend->getPNG().c_str());
+    // 이미지 로드
+    Texture2D girlfriendImg = LoadTexture(girlfriend->getPNG("침식도").c_str());
     
 	std::vector<GameScene> openingTexts1;
 	Opening1(openingTexts1);
-	OpeningLoop(openingTexts1, {0}, "");
+	CinematicFrame(openingTexts1, {0}, "");
 
     std::vector<GameScene> openingTexts2;
     Opening2(openingTexts2);
-	OpeningLoop(openingTexts2, girlfriendImg, ">>시스템 동기화 시작");
+	CinematicFrame(openingTexts2, girlfriendImg, ">>시스템 동기화 시작");
 
 	PlayerName = inputPlayerName();
 
@@ -239,7 +241,7 @@ void GameManager::OpeningScene() {
 	Opening3(openingTexts3);
 
 	std::string welcomeMsg = ">>" + PlayerName + "님, 환영합니다.<<\n게임을 시작합니다.";
-    OpeningLoop(openingTexts3, girlfriendImg, welcomeMsg);
+    CinematicFrame(openingTexts3, girlfriendImg, welcomeMsg);
 
     UnloadTexture(girlfriendImg);
 }
@@ -317,6 +319,10 @@ void GameManager::renderFrame(const GameScene& scene) {
     int logStartY = 50;
     int logEndY = screenH - 160;
     float maxLogWidth = halfW - 20;
+    int imgAreaH = (logEndY - logStartY) / 3;        // 아래쪽 1/3 이미지
+    int textAreaH = (logEndY - logStartY) - imgAreaH; // 위쪽 2/3 텍스트
+    int imgStartY = logStartY + textAreaH;            // 이미지 시작 Y
+
 
     DrawLine(halfW, 40, halfW, logEndY, GRAY);
 
@@ -336,6 +342,24 @@ void GameManager::renderFrame(const GameScene& scene) {
         Color color = (realLog[i].find("[") == 0) ? girlfriend->getTextColor() : LIGHTGRAY;
         int linesDrawn = drawTextWrapped(realLog[i], halfW + 10, currentRealY, maxLogWidth, FONT_SIZE, color);
         currentRealY += linesDrawn * lineHeight;
+    }
+
+    // 이미지 (오른쪽 아래 1/3)
+    if (currentSceneImage.id != 0) {
+        // 구분선
+        DrawLine(halfW, imgStartY, screenW, imgStartY, DARKGRAY);
+
+        float imgScale = (float)imgAreaH * 0.9f / currentSceneImage.height;
+        if (currentSceneImage.width * imgScale > halfW - 20) {
+            imgScale = (float)(halfW - 20) / currentSceneImage.width;
+        }
+
+        int imgW = currentSceneImage.width * imgScale;
+        int imgH = currentSceneImage.height * imgScale;
+        int imgX = halfW + (halfW - imgW) / 2;
+        int imgY = imgStartY + (imgAreaH - imgH) / 2;
+
+        DrawTextureEx(currentSceneImage, { (float)imgX, (float)imgY }, 0, imgScale, WHITE);
     }
 
     // ── 하단 UI 영역 선 ───────────────────────
@@ -382,11 +406,24 @@ int GameManager::playScene(std::vector<GameScene>& script) {
 
         // 한 번만 로그 추가
         if (!logged) {
+            girlfriend->getErosion(erosion);  // 침식도 동기화
+            std::string newImagePath = girlfriend->getPNG(s.keyword);
+            if (newImagePath != currentImagePath) {
+                if (currentSceneImage.id != 0) UnloadTexture(currentSceneImage);
+                currentImagePath = newImagePath;
+                if (!newImagePath.empty()) {
+                    currentSceneImage = LoadTexture(newImagePath.c_str());
+                }
+                else {
+                    currentSceneImage = { 0 };
+                }
+            }
+
             if (!s.gameLine.empty()) addGameLog(s.speaker, s.gameLine);
 
             if (!s.realLine.empty()) 
             {
-                if (s.speaker == girlfriend->getName())addRealLog(s.speaker, girlfriend->speak(s.realLine));
+                if (s.speaker == girlfriend->getName())addRealLog(s.speaker, s.realLine);
 				else addRealLog(s.speaker, s.realLine);
             }
             logged = true;
@@ -473,24 +510,24 @@ void GameManager::checkEnding()
         playScene(itemScript);
     }
 
-    Texture2D girlfriendImg = LoadTexture(girlfriend->getPNG().c_str());
+    Texture2D girlfriendImg = LoadTexture(girlfriend->getPNG("침식도").c_str());
 
     std::vector<GameScene> ending;
 
     if (erosion < 30.0f) 
     {
         HappyEndingScene(ending);
-        OpeningLoop(ending, girlfriendImg, ">>Happy Ending<<");
+        CinematicFrame(ending, girlfriendImg, ">>Happy Ending<<");
     }
     else if (erosion < 100.0f && erosion >= 30.0f) 
     {
         NormalEndingScene(ending);
-        OpeningLoop(ending, girlfriendImg, ">>Normal Ending<<");
+        CinematicFrame(ending, girlfriendImg, ">>Normal Ending<<");
     }
 	else if (erosion >= 100.0f)
     {
         BadEndingScene(ending);
-        OpeningLoop(ending, girlfriendImg, ">>Bad Ending<<");
+        CinematicFrame(ending, girlfriendImg, ">>Bad Ending<<");
     }
 
     UnloadTexture(girlfriendImg);
@@ -503,7 +540,7 @@ void GameManager::run() {
 
     font = LoadFontEx("malgun.ttf", FONT_SIZE, nullptr, 0x3FFFF);
 
-    titleScreen();
+    //titleScreen();
     OpeningScene();
 
     std::vector<GameScene> script;

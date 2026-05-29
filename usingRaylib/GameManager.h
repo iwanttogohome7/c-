@@ -19,6 +19,7 @@ struct GameScene
     std::string options[2];  // 선택지 (비어있으면 출력 안 함)
     float erosionIncrease1 = 0;  // 선택지 1을 선택했을 때 증가할 침식도
 	float erosionIncrease2 = 0;  // 선택지 2를 선택했을 때 증가할 침식도
+	std::string keyword; // 대사에 따른 이미지 변경 키워드
 };
 
 class GameManager {
@@ -35,6 +36,8 @@ private:
     std::vector<std::string> gameLog; // 게임 대사 로그
 	std::vector<std::string> realLog; // 현실 대사 로그
     std::vector<std::function<void(std::vector<GameScene>&)>> ChapterList; //챕터 함수들을 담을 함수 배열
+	Texture2D currentSceneImage = { 0 }; // 현재 씬에 표시할 이미지
+	std::string currentImagePath = ""; // 현재 이미지 경로
 
 public:
     // 생성자에서 캐릭터 객체 초기화
@@ -43,7 +46,7 @@ public:
     ~GameManager();
 
     //GameManager
-    void addScene(std::vector<GameScene>& script, std::string name, std::string gameLine, std::string realLine, std::string systemLine = "", std::string opt1 = "", std::string opt2 = "", float erosion1 = 0.0f, float erosion2 = 0.0f);
+    void addScene(std::vector<GameScene>& script, std::string name, std::string gameLine, std::string realLine, std::string systemLine = "", std::string opt1 = "", std::string opt2 = "", float erosion1 = 0.0f, float erosion2 = 0.0f, std::string keyword = "");
     void addGameLog(std::string name, std::string text);
     void addRealLog(std::string name, std::string text);
     std::string inputPlayerName();
@@ -52,11 +55,12 @@ public:
 	int playScene(std::vector<GameScene>& script);
     void titleScreen();
     void OpeningScene();
-    void OpeningLoop(std::vector<GameScene>& script, Texture2D img, std::string systemMsg);
+    void CinematicFrame(std::vector<GameScene>& script, Texture2D img, std::string systemMsg);
     void run();
     void checkEnding();
 
     //시나리오 데이터
+    int getErosionLevel();
 	void Opening1(std::vector<GameScene>& script);
     void Opening2(std::vector<GameScene>& script);
 	void Opening3(std::vector<GameScene>& script);
