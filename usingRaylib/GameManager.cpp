@@ -82,33 +82,56 @@ void GameManager::addRealLog(std::string name, std::string text)
 }
 
 void GameManager::titleScreen() {
+	Texture2D titleImg = LoadTexture("title.png");
+
     while (!WindowShouldClose()) {
         int screenW = GetScreenWidth();
         int screenH = GetScreenHeight();
+        Vector2 mousePos = GetMousePosition();
+
+        // 2. 이미지 스케일 계산 (화면에 가능한 크게 배치)
+        // 화면 가로/세로 비율에 맞춰 이미지가 잘리지 않으면서 가득 차도록 계산합니다.
+        float scale = (float)screenW / titleImg.width;
+        if (titleImg.height * scale < screenH) scale = (float)screenH / titleImg.height;
+
         BeginDrawing();
         ClearBackground(BLACK);
-        std::string title = "싱 크";
-		std::string start = "Press to Start";
-		Vector2 mousePos = GetMousePosition();
 
-		DrawRectangleLines(480, 1, 960, 521, {0,0,0,180});
-        DrawTextEx(font, title.c_str(), {500, 5}, 500, 1, WHITE);
+        // 3. 이미지 중앙 배치 및 출력
+        float posX = (screenW - (titleImg.width * scale)) / 2.0f;
+        float posY = (screenH - (titleImg.height * scale)) / 2.0f;
+        DrawTextureEx(titleImg, { posX, posY }, 0.0f, scale, WHITE);
 
-		Rectangle startRect = { 600, 521, 1500, 200 };
-        Color startColor = CheckCollisionPointRec(mousePos, startRect) ? RED : WHITE;
-        DrawRectangleLines(600, 521, 1500, 200, {0,0,0,180});
-        DrawTextEx(font, start.c_str(), { 600, 525 }, 145, 1, startColor);
+        // 4. "Press to Start" 텍스트 설정
+        std::string start = "Press to Start";
+        float fontSize = 80.0f; // 텍스트 크기
+        Vector2 textSize = MeasureTextEx(font, start.c_str(), fontSize, 1);
 
-		
+        // 하단 중앙에 배치
+        Rectangle startRect = {
+            (float)(screenW - textSize.x) / 2,
+            (float)(screenH * 0.85f), // 화면 하단 85% 지점
+            textSize.x,
+            textSize.y
+        };
 
-        if (CheckCollisionPointRec(mousePos, startRect)) {
-            DrawTextEx(font, start.c_str(), { 600, 525 }, 145, 1, startColor);
-			if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
-                
-                break;
+        // 마우스 오버 시 색상 변경 및 클릭 감지
+        bool isHovered = CheckCollisionPointRec(mousePos, startRect);
+        Color startColor = isHovered ? RED : WHITE;
+
+        // 가독성을 위한 검은색 반투명 띠 (이미지가 밝을 경우 대비)
+        DrawRectangle(0, startRect.y - 10, screenW, startRect.height + 20, { 0, 0, 0, 100 });
+        DrawTextEx(font, start.c_str(), { startRect.x, startRect.y }, fontSize, 1, startColor);
+
+        // 시작 조건: 클릭 혹은 키 입력
+        if ((isHovered && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) || IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE)) {
+            break;
         }
+
         EndDrawing();
     }
+    // 사용 후 메모리 해제
+    UnloadTexture(titleImg);
 }
 
 std::string GameManager::inputPlayerName() {
@@ -225,7 +248,7 @@ void GameManager::CinematicFrame(std::vector<GameScene>& script, Texture2D img, 
 void GameManager::OpeningScene() {
 	girlfriend->getErosion(erosion);
     // 이미지 로드
-    Texture2D girlfriendImg = LoadTexture(girlfriend->getPNG("침식도").c_str());
+    Texture2D girlfriendImg = LoadTexture(girlfriend->getPNG("오프닝").c_str());
     
 	std::vector<GameScene> openingTexts1;
 	Opening1(openingTexts1);
@@ -517,17 +540,17 @@ void GameManager::checkEnding()
     if (erosion < 30.0f) 
     {
         HappyEndingScene(ending);
-        CinematicFrame(ending, girlfriendImg, ">>Happy Ending<<");
+        CinematicFrame(ending, girlfriendImg, ">>END - Sync " + std::to_string((int)erosion) + "% [Connection Lost]<<");
     }
     else if (erosion < 100.0f && erosion >= 30.0f) 
     {
         NormalEndingScene(ending);
-        CinematicFrame(ending, girlfriendImg, ">>Normal Ending<<");
+        CinematicFrame(ending, girlfriendImg, ">>END - Sync " + std::to_string((int)erosion) + "% [Signal Lost] << ");
     }
 	else if (erosion >= 100.0f)
     {
         BadEndingScene(ending);
-        CinematicFrame(ending, girlfriendImg, ">>Bad Ending<<");
+        CinematicFrame(ending, girlfriendImg, ">>END - Sync 100% [Connection Established]<<");
     }
 
     UnloadTexture(girlfriendImg);
@@ -540,7 +563,7 @@ void GameManager::run() {
 
     font = LoadFontEx("malgun.ttf", FONT_SIZE, nullptr, 0x3FFFF);
 
-    //titleScreen();
+    titleScreen();
     OpeningScene();
 
     std::vector<GameScene> script;

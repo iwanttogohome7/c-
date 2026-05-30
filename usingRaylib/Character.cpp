@@ -20,16 +20,14 @@ Color Girlfriend::getTextColor() {
 }
 std::string Girlfriend::getPNG(const std::string keyword) {
 	// 키워드에 따른 이미지(현재는 임시 이미지 파일명)
-    if(keyword == "웃음") return "smile.png";
-    if(keyword == "울음") return "cry.png";
-    if(keyword == "화남") return "angry.png";
+    if(keyword == "오프닝") return "opening.png";
 
 	// 침식도에 따른 이미지(현재는 임시 이미지 파일명)
     if(keyword == "침식도")
     {
-        if (erosion >= 70.0f) return "picture2.png";
-        if (erosion >= 30.0f) return "picture1.png";
-        else return "picture.png";
+        if (erosion >= 100.0f) return "bad.png";
+        if (erosion >= 30.0f) return "normal.png";
+        else return "happy.png";
     }
 
     return "";

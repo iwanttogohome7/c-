@@ -1,12 +1,10 @@
 ﻿#include "GameManager.h"
 
 
-//addSecne(script, 이름, 게임 대사, 현실 대사, 시스템 메시지, 선택지1, 선택지2, 침식도 증가량1, 침식도 증가량2, 이미지 키워드) 
+//addSecne(script, 이름, 게임 대사, 현실 대사, 시스템 메시지, 선택지1, 선택지2, 침식도 증가량1, 침식도 증가량2) 
 // 이름과 대사들은 상황에 맞게 자유롭게 바꿔주세요. 
 // 시스템 메시지와 선택지, 침식도 증가량은 필요 없으면 안 적으셔도됩니다. 
 // 침식도 증가량은 선택지에 따라 달라질 수 있으니, 선택지마다 다른 값을 넣어주시면 됩니다.
-// 이미지 키워드는 이미지가 필요한 부분에 Character.cpp에서 getPNG함수에 있는 키워드 중 하나를 넣어주시면 됩니다.
-// 오프닝과 엔딩에는 이미지 키워드가 필요 없으니 빈칸으로 두시면 됩니다.
 // 객체지향을 살리기 위해 여자친구와 용의자의 이름은 각각 girlfriend->getName()과 suspect->getName()으로 불러오게 했습니다.
 // 플레이어 이름은 PlayerName으로 불러오시면 됩니다. (inputPlayerName함수에서 입력받은 이름이 저장됩니다.)
 // 게임 대사만 적으면 왼쪽에만, 현실 대사만 적으면 오른쪽에만 출력되며 둘 다 적으면 양쪽에 모두 출력됩니다.
@@ -155,7 +153,7 @@ void GameManager::Chapter2(std::vector<GameScene>& script) {
 	addScene(common, suspect->getName(), "그래야 나한테만 집중할 테니까. ", "");
 	addScene(common, suspect->getName(), "...당신도 손가락 조심해.", "");
 	addScene(common, suspect->getName(), "그렇게 키보드만 두드리고 있다간, 언제 잘려 나갈지 모르니까.", "");
-	addScene(common, "", "", "", "", "피해자의 신체 훼손은 철저히 네 가학적인 욕구 때문이었다. 기록해 두지.", "(키보드...? 방금 전부터 왜 자꾸 현실의 나한테 말을 거는 것 같지?)", 0, 10, "침식도");
+	addScene(common, "", "", "", "", "피해자의 신체 훼손은 철저히 네 가학적인 욕구 때문이었다. 기록해 두지.", "(키보드...? 방금 전부터 왜 자꾸 현실의 나한테 말을 거는 것 같지?)", 0, 10);
 
 	int choice = playScene(common);
 	int sync = getErosionLevel();
@@ -273,7 +271,7 @@ void GameManager::Chapter4(std::vector<GameScene>& script) {
 	addScene(common, suspect->getName(), " 그래야만 안심이 됐거든.", "");
 	addScene(common, "형사", "피해자들을 외부와 철저히 단절시켜서 심리적으로 지배하려 했군.", "");
 	addScene(common, suspect->getName(), "지배? 아니, 사랑이지. 바깥세상의 쓰레기 같은 소음으로부터 지켜준 거야. 큭큭…", "");
-	addScene(common, "", "", "", "", "(순간, 닫혀있는 등 뒤의 방문이 몹시 거슬리기 시작한다) …바깥세상과 단절된 완벽한 곳이라. 이 묘하게 숨 막히는 기분은 대체 뭐지?", "감금과 세뇌를 사랑으로 포장하지 마라. 다음 피해자는 어떻게 유인했지?", 10, 0);
+	addScene(common, "", "", "", "", "(순간, 닫혀있는 등 뒤의 방문이 몹시 거슬리기 시작한다) …바깥세상과 단절된 완벽한 곳이라. 이 묘하게 숨 막히는 기분은 대체 뭐지?", "감금과 세뇌를 사랑으로 포장하지 마라. 다음 피해자는 어떻게 유인했지?", 18, 0);
 
 	int choice = playScene(common);
 	int sync = getErosionLevel();
@@ -331,7 +329,7 @@ void GameManager::Chapter5(std::vector<GameScene>& script) {
 	addScene(common, suspect->getName(), "그냥 여기 가둬두면 영원히 내 것으로 만드는 방법이 있다고.", "");
 	addScene(common, "형사", "... 그 여자는 네 망상이 아닌건가?", "");
 	addScene(common, suspect->getName(), "(피식 웃으며) “당신도 알잖아.“", "");
-	addScene(common, "", "", "", "", "지금은 취조중이다. 여긴 네 소설을 듣는 자리 아니니까, 쓸데없는 말 말고 사실 관계만 똑바로 진술해.", "(펜을 내려놓는다. 왜인지 그 말을 부정할 수가 없다.)", 0, 10);
+	addScene(common, "", "", "", "", "지금은 취조중이다. 여긴 네 소설을 듣는 자리 아니니까, 쓸데없는 말 말고 사실 관계만 똑바로 진술해.", "(펜을 내려놓는다. 왜인지 그 말을 부정할 수가 없다.)", 0, 12);
 
 	int choice = playScene(common);
 	int sync = getErosionLevel();
@@ -399,7 +397,7 @@ void GameManager::Chapter6(std::vector<GameScene>& script) {
 	addScene(common, suspect->getName(), "전화도 안 하고, 밖에도 안 나가고. 그게 제일 보기 좋았어.", "");
 	addScene(common, "형사", "그건 사랑이 아니라 소유욕이다.", "");
 	addScene(common, suspect->getName(), "(눈가가 붉어지며) ... 누구나 잃고 싶지 않은 사람이 있는 거 아닌가요, 형사님?", "");		
-	addScene(common, "", "", "", "", "(괜히 파일을 넘긴다) ... 다음 질문으로 넘어가지.", "그런 심리 조작 시도는 통하지 않는다. 이미 너에 대한 정보는 알고 있어. 납치 장소를 말해.", 10, 0);
+	addScene(common, "", "", "", "", "(괜히 파일을 넘긴다) ... 다음 질문으로 넘어가지.", "그런 심리 조작 시도는 통하지 않는다. 이미 너에 대한 정보는 알고 있어. 납치 장소를 말해.", 15, 0);
 
 	int choice = playScene(common);
 	int sync = getErosionLevel();
@@ -480,7 +478,7 @@ void GameManager::Chapter7(std::vector<GameScene>& script) {
 	addScene(common, suspect->getName(), "(낮고 또렷하게)" + PlayerName, "");
 	addScene(common, "형사", "... 내가 이름을 밝힌 적이 있던가? 누가 알려준 거지?", "");
 	addScene(common, suspect->getName(), "(잠시 생각하는 듯 고개를 기울이며) “... 형사님이 알려준 것 같기도 하고, 그 여자한테 들은 것 같기도 하고..", "");
-	addScene(common, "", "", "", "", "공범이 있다는 거냐. 그 여자 신원을 대라.", "(내가 알려준 적이 없다는 걸 안다. 근데 … 그 여자의 정체는 혹시.)", 0, 10);
+	addScene(common, "", "", "", "", "공범이 있다는 거냐. 그 여자 신원을 대라.", "(내가 알려준 적이 없다는 걸 안다. 근데 … 그 여자의 정체는 혹시.)", 0, 16);
 
 	int choice = playScene(common);
 	int sync = getErosionLevel();
@@ -623,7 +621,7 @@ void GameManager::Chapter8(std::vector<GameScene>& script) {
 	addScene(common, "형사", "편한 방법.", "");
 	addScene(common, suspect->getName(), "(잠시 뜸을 들이며) 누군가 나만 바라보게 만들고 싶으면, 다른 걸 전부 없애면 되거든.", "");
 	addScene(common, suspect->getName(), "사랑받으려고 한 게 아니야. 그 사람한테 내가 전부가 되고 싶었던 거지.", "");
-	addScene(common, "", "", "", "", "(다른 걸 전부 없애면 된다. 그 말이 어디선가 들어본 것처럼 귀에 걸린다.)", "계획적 고립이었군. 구체적인 수단을 진술해라.", 15, 0);
+	addScene(common, "", "", "", "", "(다른 걸 전부 없애면 된다. 그 말이 어디선가 들어본 것처럼 귀에 걸린다.)", "계획적 고립이었군. 구체적인 수단을 진술해라.", 14, 0);
 
 	int choice = playScene(common);
 	int sync = getErosionLevel();
@@ -941,7 +939,7 @@ void GameManager::BadEndingScene(std::vector<GameScene>& script) {
 }
 
 void GameManager::NormalEndingScene(std::vector<GameScene>& script) {
-	addScene(script, "", "", "", "[Sync Error: ??% … Signal Fading] 경고: 일부 데이터가 손상되었습니다. 게임이 종료되었습니다.");
+	addScene(script, "", "", "", "[Sync Error:" + std::to_string((int)erosion) + "% … Signal Fading] 경고: 일부 데이터가 손상되었습니다. 게임이 종료되었습니다.");
 	addScene(script, "", "", "", "화면이 꺼진다.");
 	addScene(script, girlfriend->getName(), "", "", "다 했다~ 어땠어?");
 	addScene(script, PlayerName, "", "", "…나쁘지 않았어.");
@@ -970,11 +968,11 @@ void GameManager::NormalEndingScene(std::vector<GameScene>& script) {
 	addScene(script, "", "", "", "나는 다시 꺼진 화면만을 바라본다.");
 	addScene(script, "", "", "", "그냥 묻지 않기로 한다.");
 	addScene(script, "", "", "", "이대로가 좋아.");
-	addScene(script, "", "", "", "END - Sync ??% [Signal Lost]");
+	addScene(script, "", "", "", "END - Sync " + std::to_string((int)erosion) + "% [Signal Lost]");
 }
 
 void GameManager::HappyEndingScene(std::vector<GameScene>& script) {
-	addScene(script, "", "", "", "[Sync Error: ??% … Connection Lost] 게임이 종료되었습니다.");
+	addScene(script, "", "", "", "[Sync Error:" + std::to_string((int)erosion) + "% … Connection Lost] 게임이 종료되었습니다.");
 	addScene(script, "", "", "", "화면이 꺼진다.");
 	addScene(script, girlfriend->getName(), "", "", "다 했다~");
 	addScene(script, PlayerName, "", "", "응.");
@@ -1007,5 +1005,5 @@ void GameManager::HappyEndingScene(std::vector<GameScene>& script) {
 	addScene(script, "", "", "", "뭐라고 답장이 올지, 오기는 할지.");
 	addScene(script, "", "", "", "그것까지는 모르겠다.");
 	addScene(script, "", "", "", "그래도 일단 보냈다.");
-	addScene(script, "", "", "", "END - Sync ? ? % [Connection Lost]");
+	addScene(script, "", "", "", "END - Sync " + std::to_string((int)erosion) + "% [Connection Lost]");
 }
