@@ -533,6 +533,7 @@ void GameManager::checkEnding()
         playScene(itemScript);
     }
 
+	girlfriend->getErosion(erosion);
     Texture2D girlfriendImg = LoadTexture(girlfriend->getPNG("침식도").c_str());
 
     std::vector<GameScene> ending;
@@ -584,7 +585,7 @@ void GameManager::run() {
             itemShown = true;
         }
     }
-    
+
     checkEnding();
 
     UnloadFont(font);

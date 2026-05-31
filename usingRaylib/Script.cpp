@@ -901,16 +901,19 @@ void GameManager::Chapter9(std::vector<GameScene>& script) {
 
 // 아이템 획득 시나리오
 void GameManager::itemScene(std::vector<GameScene>& script) {
+	addScene(script, girlfriend->getName(), "", "아 맞다! 오빠, 잠깐만 기다려봐!");
 	addScene(script, girlfriend->getName(), "", "오빠 이거 봐봐! 내가 만든 간식인데 맛있어!");
 	addScene(script, girlfriend->getName(), "", "내가 밤새워서 레시피 연구한 건데!");
 	addScene(script, girlfriend->getName(), "", "오빠가 좋아하는 맛으로 만들었어!");
+	addScene(script, PlayerName, "", "고마워, 유라야. 이따가 배고프면 먹어볼게.");
 	addScene(script, "", "", "", "여자친구가 수상한 간식을 건넸다. 지금은 배가 안 고프니 나중에 먹어야지. ");
 }
 
 // 아이템 사용 시나리오
 void GameManager::itemUsing(std::vector<GameScene>& script) {
-	addScene(script, girlfriend->getName(), "", "내가 준 과자 안먹을거야?");
-	addScene(script, girlfriend->getName(), "", "안 먹으면 후회할텐데");
+	addScene(script, girlfriend->getName(), "", "오빠! 그거 아직도 안 먹었어?");
+	addScene(script, girlfriend->getName(), "", "내가 준 간식인데 안 먹을거야?");
+	addScene(script, girlfriend->getName(), "", "안 먹으면 후회할텐데~?");
 	addScene(script, "", "", "", "수상한 간식을 먹겠습니까?", "먹는다", "먹지 않는다", -20, 0);
 }
 
@@ -927,7 +930,7 @@ void GameManager::BadEndingScene(std::vector<GameScene>& script) {
 	addScene(script, girlfriend->getName(), "", "", "있잖아, 이거도 찾았는데.");
 	addScene(script, girlfriend->getName(), "", "", "이번엔 좀 더 어려운 거래. 오빠 잘 할 수 있을 것 같아서 가져왔어.");
 	addScene(script, girlfriend->getName(), "", "", "해볼래?");
-	addScene(script, "", "", "", "주인공은 아무 말 없이 USB를 받아든다.");
+	addScene(script, "", "", "", "당신은 아무 말 없이 USB를 받아든다.");
 	addScene(script, "", "", "", "컴퓨터에 꽂는다.");
 	addScene(script, girlfriend->getName(), "", "", "(작게, 혼잣말처럼) …잘됐다.");
 	addScene(script, "", "", "", "화면에 타이틀이 뜬다.");
