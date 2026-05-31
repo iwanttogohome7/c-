@@ -567,7 +567,7 @@ void GameManager::run() {
 
     font = LoadFontEx("malgun.ttf", FONT_SIZE, nullptr, 0x3FFFF);
 
-    /*titleScreen();
+    titleScreen();
     OpeningScene();
 
     std::vector<GameScene> script;
@@ -587,10 +587,8 @@ void GameManager::run() {
             playScene(itemScript);
             itemShown = true;
         }
-    }*/
+    }
 
-    erosion = 56;
-    PlayerName = "Sync";
 
     checkEnding();
 

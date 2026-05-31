@@ -16,13 +16,14 @@ std::string Suspect::getPNG(const std::string keyword) {
 // 3. 여자친구 클래스 (Girlfriend) 구현
 Girlfriend::Girlfriend() : Character("유라") {}
 Color Girlfriend::getTextColor() {
+	if (erosion >= 90.0f) return RED;
     return WHITE;
 }
 std::string Girlfriend::getPNG(const std::string keyword) {
-	// 키워드에 따른 이미지(현재는 임시 이미지 파일명)
+	// 오프닝 이미지
     if(keyword == "오프닝") return "opening.png";
 
-	// 침식도에 따른 이미지(현재는 임시 이미지 파일명)
+	// 침식도에 따른 이미지
     if(keyword == "침식도")
     {
         if (erosion >= 100.0f) return "bad.png";
