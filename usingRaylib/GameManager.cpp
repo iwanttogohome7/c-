@@ -540,18 +540,21 @@ void GameManager::checkEnding()
 
     if (erosion < 30.0f) 
     {
-        HappyEndingScene(ending);
-        CinematicFrame(ending, girlfriendImg, ">>END - Sync " + std::to_string((int)erosion) + "% [Connection Lost]<<");
+        HappyEndingScene1(ending);
+        CinematicFrame(ending, girlfriendImg, "");
+        std::vector<GameScene> ending2;
+        HappyEndingScene2(ending2);
+        CinematicFrame(ending2, {0}, "[Sync Error:" + std::to_string((int)erosion) + "% … Connection Lost] 게임이 종료되었습니다.");
     }
     else if (erosion < 100.0f && erosion >= 30.0f) 
     {
         NormalEndingScene(ending);
-        CinematicFrame(ending, girlfriendImg, ">>END - Sync " + std::to_string((int)erosion) + "% [Signal Lost] << ");
+        CinematicFrame(ending, girlfriendImg, "[Sync Error:" + std::to_string((int)erosion) + "% … Signal Fading] 경고: 일부 데이터가 손상되었습니다. 게임이 종료되었습니다.");
     }
 	else if (erosion >= 100.0f)
     {
         BadEndingScene(ending);
-        CinematicFrame(ending, girlfriendImg, ">>END - Sync 100% [Connection Established]<<");
+        CinematicFrame(ending, girlfriendImg, "[Sync Error: 100.00% … Connection Established] 환영합니다. 게임을 재시작합니다.");
     }
 
     UnloadTexture(girlfriendImg);
@@ -564,7 +567,7 @@ void GameManager::run() {
 
     font = LoadFontEx("malgun.ttf", FONT_SIZE, nullptr, 0x3FFFF);
 
-    titleScreen();
+    /*titleScreen();
     OpeningScene();
 
     std::vector<GameScene> script;
@@ -584,7 +587,10 @@ void GameManager::run() {
             playScene(itemScript);
             itemShown = true;
         }
-    }
+    }*/
+
+    erosion = 56;
+    PlayerName = "Sync";
 
     checkEnding();
 

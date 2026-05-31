@@ -918,7 +918,6 @@ void GameManager::itemUsing(std::vector<GameScene>& script) {
 }
 
 void GameManager::BadEndingScene(std::vector<GameScene>& script) {
-	addScene(script, "", "", "", "[Sync Error: 100.00% … Connection Established] 환영합니다. 게임을 재시작합니다.");
 	addScene(script, "", "", "", "화면이 꺼지지 않는다.");
 	addScene(script, girlfriend->getName(), "", "", "…오빠.");
 	addScene(script, PlayerName, "", "", "응.");
@@ -942,7 +941,6 @@ void GameManager::BadEndingScene(std::vector<GameScene>& script) {
 }
 
 void GameManager::NormalEndingScene(std::vector<GameScene>& script) {
-	addScene(script, "", "", "", "[Sync Error:" + std::to_string((int)erosion) + "% … Signal Fading] 경고: 일부 데이터가 손상되었습니다. 게임이 종료되었습니다.");
 	addScene(script, "", "", "", "화면이 꺼진다.");
 	addScene(script, girlfriend->getName(), "", "", "다 했다~ 어땠어?");
 	addScene(script, PlayerName, "", "", "…나쁘지 않았어.");
@@ -974,8 +972,7 @@ void GameManager::NormalEndingScene(std::vector<GameScene>& script) {
 	addScene(script, "", "", "", "END - Sync " + std::to_string((int)erosion) + "% [Signal Lost]");
 }
 
-void GameManager::HappyEndingScene(std::vector<GameScene>& script) {
-	addScene(script, "", "", "", "[Sync Error:" + std::to_string((int)erosion) + "% … Connection Lost] 게임이 종료되었습니다.");
+void GameManager::HappyEndingScene1(std::vector<GameScene>& script) {
 	addScene(script, "", "", "", "화면이 꺼진다.");
 	addScene(script, girlfriend->getName(), "", "", "다 했다~");
 	addScene(script, PlayerName, "", "", "응.");
@@ -991,6 +988,9 @@ void GameManager::HappyEndingScene(std::vector<GameScene>& script) {
 	addScene(script, girlfriend->getName(), "", "", "오빠, 있잖아.");
 	addScene(script, PlayerName, "", "", "응.");
 	addScene(script, girlfriend->getName(), "", "", "...아무것도 아니야. 잘 자.");
+}
+
+void GameManager::HappyEndingScene2(std::vector<GameScene>& script) {
 	addScene(script, "", "", "", "현관문이 닫힌다.");
 	addScene(script, "", "", "", "유라가 나가자, 코 끝을 찌르는 악취가 나기 시작했다.");
 	addScene(script, "", "", "", "신문지로 막아둔 창문 때문에 하루종일 어두컴컴했던 공간도,");

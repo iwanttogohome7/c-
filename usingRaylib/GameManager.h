@@ -78,5 +78,7 @@ public:
 	void itemUsing(std::vector<GameScene>& script);
 	void BadEndingScene(std::vector<GameScene>& script);
 	void NormalEndingScene(std::vector<GameScene>& script);
-	void HappyEndingScene(std::vector<GameScene>& script);
+	void HappyEndingScene1(std::vector<GameScene>& script);
+	void HappyEndingScene2(std::vector<GameScene>& script);
+
 };
