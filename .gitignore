@@ -34,3 +34,4 @@
 x64/
 **/x64/
 /usingRaylib/.vs
+*.ipch
