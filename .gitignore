@@ -30,7 +30,6 @@
 *.exe
 *.out
 *.app
-/C++_Game/.vs
 /usingRaylib/.vs
 *.ipch
 *.vsidx
@@ -46,3 +45,4 @@
 *.tlog
 /std_game/usingRaylib/x64
 /std_game/x64
+/std_game/.vs
