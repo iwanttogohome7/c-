@@ -31,8 +31,6 @@
 *.out
 *.app
 /C++_Game/.vs
-x64/
-**/x64/
 /usingRaylib/.vs
 *.ipch
 *.vsidx
@@ -42,3 +40,9 @@ x64/
 !**/raylib.dll
 !**/raylib.lib
 !**/raylibdll.lib
+*.log
+*.recipe
+*.ilk
+*.tlog
+/std_game/usingRaylib/x64
+/std_game/x64
