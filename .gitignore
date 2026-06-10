@@ -35,10 +35,10 @@ x64/
 **/x64/
 /usingRaylib/.vs
 *.ipch
-
-!/lib/
-!/lib/**
-*.vsidx
 *.vsidx
 *.db
 *.json
+
+!**/lib/x64/raylib.dll
+!**/lib/x64/raylib.lib
+!**/lib/x64/raylibdll.lib
