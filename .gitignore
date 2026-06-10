@@ -39,6 +39,6 @@ x64/
 *.db
 *.json
 
-!**/lib/x64/raylib.dll
-!**/lib/x64/raylib.lib
-!**/lib/x64/raylibdll.lib
+!**/raylib.dll
+!**/raylib.lib
+!**/raylibdll.lib
